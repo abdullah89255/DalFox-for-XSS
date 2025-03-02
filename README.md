@@ -242,5 +242,274 @@ dalfox url "http://example.com?query=test" --waf-evasion
 ```
 
 ---
+Here are additional **DalFox** examples demonstrating advanced and specific use cases to help you fully utilize its features:
 
-These examples demonstrate the flexibility of DalFox for detecting and exploiting XSS vulnerabilities. Let me know if you need further help or more examples!
+---
+
+### **16. Scanning with Proxy Support**
+Use a proxy for HTTP requests during the scan (e.g., for Burp Suite or other intercepting proxies).
+
+#### Command:
+```bash
+dalfox url "http://example.com?param=test" --proxy http://127.0.0.1:8080
+```
+
+#### Use Case:
+Useful for analyzing traffic in tools like Burp Suite or OWASP ZAP while DalFox scans the target.
+
+---
+
+### **17. Using Debug Mode**
+Enable debug mode to see detailed request and response logs.
+
+#### Command:
+```bash
+dalfox url "http://example.com?param=test" --debug
+```
+
+#### Output:
+```plaintext
+[DEBUG] Sending Request: GET http://example.com?param=test
+[DEBUG] Response Status: 200 OK
+```
+
+---
+
+### **18. Limiting Scan Depth**
+Control how deeply DalFox crawls links during a scan.
+
+#### Command:
+```bash
+dalfox url "http://example.com" --crawl --crawl-depth 2
+```
+
+#### Use Case:
+Limits the number of nested links followed during the crawl process to prevent scanning unnecessary pages.
+
+---
+
+### **19. Ignore Specific Parameters**
+Exclude certain parameters from the scan to avoid wasting resources.
+
+#### Command:
+```bash
+dalfox url "http://example.com?param1=test&param2=test" --skip-param param2
+```
+
+---
+
+### **20. Exclude DOM XSS Testing**
+If you don't want to include DOM-based XSS testing during a scan.
+
+#### Command:
+```bash
+dalfox url "http://example.com?param=test" --skip-dom
+```
+
+---
+
+### **21. Save All Results to a File**
+Store all scan results in a file, including logs and findings.
+
+#### Command:
+```bash
+dalfox url "http://example.com?param=test" --output full_scan.log
+```
+
+---
+
+### **22. Analyze Subdomains**
+Combine tools like `subfinder` or `amass` to find subdomains and pipe them into DalFox.
+
+#### Command:
+```bash
+subfinder -d example.com | xargs -I {} dalfox url {}
+```
+
+#### Output:
+```plaintext
+[INFO] Scanning Subdomain: sub1.example.com
+[RESULT] Found XSS Payload: http://sub1.example.com?param=<script>alert(1)</script>
+```
+
+---
+
+### **23. Skip Boring Responses**
+Avoid scanning URLs that return specific HTTP status codes (e.g., 403, 404).
+
+#### Command:
+```bash
+dalfox url "http://example.com?param=test" --skip-status-code 403,404
+```
+
+---
+
+### **24. Test Parameters from a File**
+If you have specific parameters to test, load them from a file.
+
+#### Command:
+```bash
+dalfox url "http://example.com" --mining-dict param_list.txt
+```
+
+#### Example `param_list.txt`:
+```plaintext
+search
+action
+id
+```
+
+---
+
+### **25. Scan Multiple Query Parameters**
+Scan URLs with multiple parameters.
+
+#### Command:
+```bash
+dalfox url "http://example.com?param1=test&param2=test" --all-param
+```
+
+---
+
+### **26. Using the POC Only Mode**
+Generate a Proof of Concept (POC) for XSS payloads without performing full exploitation.
+
+#### Command:
+```bash
+dalfox url "http://example.com?param=test" --only-poc
+```
+
+#### Output:
+```plaintext
+[INFO] Generated POC: http://example.com?param=<svg/onload=alert(1)>
+```
+
+---
+
+### **27. Use Preflight Mode**
+Preflight mode quickly checks for XSS potential without a deep scan.
+
+#### Command:
+```bash
+dalfox url "http://example.com?param=test" --preflight
+```
+
+#### Use Case:
+Useful for a fast, preliminary assessment.
+
+---
+
+### **28. Extract URLs from JavaScript Files**
+Scan JavaScript files on the page to find hidden or dynamically generated URLs.
+
+#### Command:
+```bash
+dalfox url "http://example.com" --grep
+```
+
+---
+
+### **29. Testing with Delay Between Requests**
+Introduce a delay between requests to prevent triggering rate limits or anti-bot mechanisms.
+
+#### Command:
+```bash
+dalfox url "http://example.com?param=test" --delay 1000
+```
+
+- `--delay 1000`: Adds a 1-second delay between requests.
+
+---
+
+### **30. Scan with a Custom User-Agent**
+Set a custom User-Agent string for requests.
+
+#### Command:
+```bash
+dalfox url "http://example.com?param=test" --user-agent "DalFoxScanner/1.0"
+```
+
+---
+
+### **31. Handling Redirect Chains**
+Follow redirects during the scan and analyze the redirected URLs.
+
+#### Command:
+```bash
+dalfox url "http://example.com?param=test" --follow-redirects
+```
+
+---
+
+### **32. Scan Only Specific Parameter Types**
+Focus on specific types of parameters, like `GET`, `POST`, or cookies.
+
+#### Command:
+```bash
+dalfox url "http://example.com" --param-type get
+```
+
+---
+
+### **33. Disable Auto Mining**
+Disable DalFox's automatic parameter mining to save time.
+
+#### Command:
+```bash
+dalfox url "http://example.com" --skip-mining
+```
+
+---
+
+### **34. Run with Multiple Threads**
+Speed up scanning by increasing the number of threads.
+
+#### Command:
+```bash
+dalfox file urls.txt --threads 20
+```
+
+---
+
+### **35. XSS Detection on JSON Responses**
+Test for XSS payloads in JSON responses.
+
+#### Command:
+```bash
+dalfox url "http://example.com/api" --data '{"param":"test"}'
+```
+
+---
+
+### **36. Run DalFox in Docker**
+DalFox can be run inside a Docker container if you prefer not to install it locally.
+
+#### Build and Run DalFox in Docker:
+```bash
+docker pull hahwul/dalfox
+docker run -it --rm hahwul/dalfox url "http://example.com?param=test"
+```
+
+---
+
+### **37. Integration with CI/CD Pipelines**
+Automate DalFox scanning in your CI/CD workflow using scripts.
+
+#### Example Script:
+```bash
+dalfox file urls.txt --threads 20 --output ci_scan_results.json
+```
+
+---
+
+### **38. Test for Stored XSS**
+Manually test for stored XSS using injected payloads.
+
+#### Command:
+```bash
+dalfox url "http://example.com?param=test" --manual-stored
+```
+
+---
+
+These examples showcase the wide range of features and capabilities that DalFox provides. Let me know if you need clarification or further examples!
